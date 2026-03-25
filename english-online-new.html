@@ -1,0 +1,1794 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>幼儿园英语对话学习</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 自定义 Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4A9DFF',
+                        secondary: '#FF9042',
+                        accent: '#FFD166',
+                        success: '#06D6A0',
+                        warning: '#FFD166',
+                        danger: '#EF476F',
+                        light: '#F8F9FA',
+                        dark: '#212529'
+                    },
+                    fontFamily: {
+                        sans: ['Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .max-w-md {
+                max-width: 31rem !important;
+            }
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+            }
+            .btn-secondary {
+                @apply bg-secondary text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50;
+            }
+            .card {
+                @apply bg-white rounded-2xl shadow-lg p-6 transition-all duration-300;
+            }
+            .card-title {
+                @apply text-xl font-bold text-gray-800 mb-4;
+            }
+            .progress-bar {
+                @apply h-4 bg-gray-200 rounded-full overflow-hidden;
+            }
+            .progress-value {
+                @apply h-full bg-success rounded-full transition-all duration-500;
+            }
+            .dialog-bubble {
+                @apply rounded-2xl p-4 max-w-[80%] mb-4;
+            }
+            .dialog-bubble-robot {
+                @apply bg-primary text-white rounded-tl-none;
+            }
+            .dialog-bubble-user {
+                @apply bg-gray-100 text-gray-800 rounded-tr-none ml-auto;
+            }
+            .sentence-card {
+                @apply bg-white rounded-xl shadow p-4 mb-3 cursor-pointer transition-all duration-300 hover:shadow-lg hover:bg-blue-50;
+            }
+            .sentence-card.active {
+                @apply bg-blue-100 border-2 border-primary;
+            }
+            .tab-button {
+                @apply py-2 px-4 font-medium rounded-t-lg transition-all duration-300;
+            }
+            .tab-button.active {
+                @apply bg-white text-primary border-b-2 border-primary;
+            }
+            .tab-button:not(.active) {
+                @apply text-gray-500 hover:text-primary;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+<!-- 顶部导航栏 -->
+<nav class="bg-primary text-white shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <img src="https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/65545a5a1fb7441d8171521242aa2391~tplv-a9rns2rl98-image.image?lk3s=8e244e95&amp;rcl=20260324105048FE239C1B851A7D2C9E03&amp;rrcfp=f06b921b&amp;x-expires=1776912676&amp;x-signature=cbdaQDxTt4yQhKHij2lKH1eepCY%3D" alt="机器人老师" class="w-10 h-10 rounded-full">
+            <h1 class="text-xl font-bold">英语对话小能手</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button id="sound-toggle" class="p-2 rounded-full hover:bg-blue-600 transition-colors">
+                <i class="fa fa-volume-up"></i>
+            </button>
+            <button id="parent-mode" class="p-2 rounded-full hover:bg-blue-600 transition-colors">
+                <i class="fa fa-user-circle-o"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<main class="container mx-auto px-4 py-6">
+    <!-- 欢迎横幅 -->
+    <div class="relative rounded-3xl overflow-hidden mb-8">
+        <img src="https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/bf0e9e40b7db46a490c001098c088d49~tplv-a9rns2rl98-image.image?lk3s=8e244e95&amp;rcl=20260324105048FE239C1B851A7D2C9E03&amp;rrcfp=f06b921b&amp;x-expires=1776912681&amp;x-signature=xssVdezmo%2BSxcZM96cQQGFCgVHQ%3D" alt="英语学习" class="w-full h-48 object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/70 to-secondary/70 flex items-center">
+            <div class="ml-8 text-white">
+                <h2 class="text-3xl font-bold text-shadow mb-2">你好，小朋友！</h2>
+                <p class="text-lg">今天准备学习什么呢？</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 功能选项卡 -->
+    <div class="bg-white rounded-t-2xl shadow-md mb-1">
+        <div class="flex border-b">
+            <button class="tab-button active flex-1 text-center" data-tab="daily-plan">
+                <i class="fa fa-calendar-check-o mr-2"></i>每日计划
+            </button>
+            <button class="tab-button flex-1 text-center" data-tab="sentence-library">
+                <i class="fa fa-book mr-2"></i>句子库
+            </button>
+            <button class="tab-button flex-1 text-center" data-tab="ai-chat">
+                <i class="fa fa-comments-o mr-2"></i>AI对话
+            </button>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="bg-white rounded-b-2xl shadow-md p-6 min-h-[500px]">
+        <!-- 每日计划 -->
+        <div id="daily-plan" class="tab-content">
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">今日学习计划</h3>
+                <p class="text-gray-600">完成今天的学习任务，获得小星星奖励！</p>
+            </div>
+
+            <!-- 学习进度 -->
+            <div class="card mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-medium">今日进度</span>
+                    <span id="progress-text" class="font-bold text-primary">0/3</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-bar" class="progress-value" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- 任务列表 -->
+            <div class="space-y-4">
+                <div class="card card-hover">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                            <i class="fa fa-headphones text-primary text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">听一听</h4>
+                            <p class="text-sm text-gray-600">学习日常英语句子</p>
+                        </div>
+                        <button class="task-button btn-primary" data-task="listen">
+                            开始学习
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card card-hover">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mr-4">
+                            <i class="fa fa-microphone text-secondary text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">说一说</h4>
+                            <p class="text-sm text-gray-600">练习今日学习的句子</p>
+                        </div>
+                        <button class="task-button btn-primary" data-task="speak" disabled="">
+                            开始练习
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card card-hover">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                            <i class="fa fa-volume-control-phone text-success text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">对话练习</h4>
+                            <p class="text-sm text-gray-600">与AI机器人进行对话</p>
+                        </div>
+                        <button class="task-button btn-primary" data-task="chat" disabled="">
+                            开始对话
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 奖励区域 -->
+            <div id="reward-section" class="mt-8 hidden">
+                <div class="card bg-gradient-to-r from-yellow-100 to-orange-100 text-center">
+                    <img src="https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/65545a5a1fb7441d8171521242aa2391~tplv-a9rns2rl98-image.image?lk3s=8e244e95&amp;rcl=20260324105048FE239C1B851A7D2C9E03&amp;rrcfp=f06b921b&amp;x-expires=1776912676&amp;x-signature=cbdaQDxTt4yQhKHij2lKH1eepCY%3D" alt="机器人老师" class="w-24 h-24 mx-auto mb-4 animate-float">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">太棒了！</h3>
+                    <p class="text-gray-700 mb-4">你完成了今天的所有学习任务！</p>
+                    <div class="flex justify-center space-x-2 mb-4">
+                        <i class="fa fa-star text-yellow-400 text-2xl"></i>
+                        <i class="fa fa-star text-yellow-400 text-2xl"></i>
+                        <i class="fa fa-star text-yellow-400 text-2xl"></i>
+                    </div>
+                    <button id="next-day" class="btn-secondary">
+                        明天继续学习
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 句子库 -->
+        <div id="sentence-library" class="tab-content hidden">
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">英语句子库</h3>
+                <p class="text-gray-600">选择一个主题，学习相关的英语句子</p>
+            </div>
+
+            <!-- 主题选择 -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="greetings">问候语</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="daily">日常生活</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="food">食物</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="colors">颜色</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="animals">动物</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="numbers">数字</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="family">家庭</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="weather">天气</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="time">时间</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="hobbies">爱好</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="body">身体</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="seasons">季节</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="clothes">衣服</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="transport">交通工具</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="school">学校用品</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="places">地点</button>
+                <button class="theme-button px-4 py-2 rounded-full text-sm font-medium" data-theme="abilities">能力</button>
+
+            </div>
+
+            <!-- 句子列表 -->
+            <div id="sentences-container" class="space-y-3">
+                <!-- 句子将通过JavaScript动态加载 -->
+            </div>
+
+            <!-- 学习按钮 -->
+            <div class="mt-6 text-center">
+                <button id="learn-selected" class="btn-primary">
+                    <i class="fa fa-volume-up mr-2"></i>学习选中的句子
+                </button>
+            </div>
+        </div>
+
+        <!-- AI对话 -->
+        <div id="ai-chat" class="tab-content hidden">
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">AI对话训练</h3>
+                <p class="text-gray-600">与AI机器人对话，练习你的英语口语</p>
+            </div>
+
+            <!-- 对话区域 -->
+            <div class="card mb-4 h-80 overflow-y-auto" id="chat-container">
+                <div class="dialog-bubble dialog-bubble-robot">
+                    <p>你好！我是你的英语学习伙伴。今天我们来练习英语对话吧！</p>
+                </div>
+                <!-- 对话内容将通过JavaScript动态加载 -->
+            </div>
+
+            <!-- 对话主题选择 -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">选择对话主题：</label>
+                <select id="chat-topic" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="greetings">问候与介绍</option>
+                    <option value="daily">日常生活</option>
+                    <option value="food">食物与餐厅</option>
+                    <option value="colors">颜色与物品</option>
+                    <option value="animals">动物</option>
+                    <option  value="numbers">数字</option>
+                    <option  value="family">家庭</option>
+                    <option  value="weather">天气</option>
+                    <option  value="time">时间</option>
+                    <option  value="hobbies">爱好</option>
+                    <option  value="body">身体</option>
+                    <option  value="seasons">季节</option>
+                    <option  value="clothes">衣服</option>
+                    <option  value="transport">交通工具</option>
+                    <option  value="school">学校用品</option>
+                    <option  value="places">地点</option>
+                    <option  value="abilities">能力</option>
+                </select>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="flex">
+                <input type="text" id="chat-input" class="flex-1 border border-gray-300 rounded-l-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="输入你的英语句子...">
+                <button id="voice-input" class="bg-gray-200 px-4 border-t border-b border-r border-gray-300 rounded-r-lg hover:bg-gray-300 transition-colors">
+                    <i class="fa fa-microphone text-gray-700"></i>
+                </button>
+            </div>
+
+            <!-- 快捷回答 -->
+            <div class="mt-4 flex flex-wrap gap-2" id="quick-responses">
+                <button class="quick-response bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">Hello!</button>
+                <button class="quick-response bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">How are you?</button>
+                <button class="quick-response bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">I'm fine, thank you.</button>
+                <button class="quick-response bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">What's your name?</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- 底部导航 -->
+<footer class="bg-white shadow-inner py-4 mt-8">
+    <div class="container mx-auto px-4 text-center text-gray-600">
+        <p>英语对话小能手-为幼儿园小朋友设计</p>
+    </div>
+</footer>
+
+<!-- 学习模态框 -->
+<div id="learning-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800" id="modal-title">学习句子</h3>
+            <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <div id="modal-content" class="mb-6">
+            <!-- 模态框内容将通过JavaScript动态加载 -->
+        </div>
+
+        <div class="flex justify-between">
+            <button id="prev-sentence" class="btn-secondary opacity-50 cursor-not-allowed">
+                <i class="fa fa-arrow-left mr-2"></i>上一句
+            </button>
+            <div class="flex space-x-2">
+                <button id="play-sentence" class="btn-primary">
+                    <i class="fa fa-volume-up mr-2"></i>播放
+                </button>
+                <button id="record-modal-sentence" class="btn-secondary">
+                    <i class="fa fa-microphone mr-2"></i>跟读
+                </button>
+            </div>
+            <button id="next-sentence" class="btn-secondary">
+                下一句<i class="fa fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 音频元素 -->
+<audio id="audio-player" src="" preload="auto"></audio>
+
+<script>
+    // 全局变量
+    let currentTask = null;
+    let completedTasks = [];
+    let currentTheme = 'greetings';
+    let selectedSentences = [];
+    let currentSentenceIndex = 0;
+    let learningSentences = [];
+    let soundEnabled = true;
+    let recognition = null;
+    let isRecording = false;
+    let audioRecorder = null;
+    let audioChunks = [];
+    let currentRecordingSentence = null;
+    let todayLearningTheme = null; // 今日学习主题
+    let chatMessageCount = 0; // 对话消息计数
+
+    // 句子数据库
+    const sentenceDatabase = {
+        //问候，日常，食物，颜色，动物，问路，
+        greetings: [
+            { english: "Hello!", chinese: "你好！", pinyin: "Hā lóu" },
+            { english: "Good morning!", chinese: "早上好！", pinyin: "Gǔ d mō níng" },
+            { english: "Good afternoon!", chinese: "下午好！", pinyin: "Gǔ d ā fū tè nún" },
+            { english: "Good evening!", chinese: "晚上好！", pinyin: "Gǔ d ī wén níng" },
+            { english: "What's your name?", chinese: "你叫什么名字？", pinyin: "" },
+            { english: "My name is Yang Junhang.", chinese: "我叫杨浚航。", pinyin: "" },
+            { english: "How are you today?", chinese: "你今天好吗？", pinyin: "Hāo ā yǒu" },
+            { english: "I’m fine, thank you. And you?", chinese: "我很好，谢谢你。你呢？", pinyin: "Ài m fài n, sān k yǒu" },
+            { english: "I’m fine, too.", chinese: "我也很好。", pinyin: "Ài m fài n, tù" },
+            { english: "Nice to see/meet you again!", chinese: "很高兴 再次见到/认识 你。", pinyin: "Nài s tū sī yǒu à gèn" },
+            { english: "Nice to see/meet you, too!", chinese: "我也很高兴 见到/认识 你。", pinyin: "Nài s tū sī yǒu, tù" },
+            { english: "School is over. Goodbye!", chinese: "放学了，再见。", pinyin: "Gǔ d bāi" },
+            { english: "Goodbye!", chinese: "再见！", pinyin: "Gǔ d bāi" },
+            { english: "Bye! See you tomorrow!", chinese: "再见！明天见！", pinyin: "Sī yǒu tù mò rōu" },
+            { english: "See you later!", chinese: "待会儿见！", pinyin: "Sī yǒu lèi tè" },
+            { english: "Thank you very much.", chinese: "非常感谢你。", pinyin: "Sān k yǒu wài rēi mà ch" },
+            { english: "You’re welcome.", chinese: "不客气。", pinyin: "Yū wēi kǎn" },
+            { english: "I’m sorry.", chinese: "对不起。", pinyin: "Ài m sāo rī" },
+            { english: "That’s all right.", chinese: "没关系。", pinyin: "Dài s ào rài t" },
+            { english: "Have a nice day!", chinese: "祝你有美好的一天！", pinyin: "Hài v à nài s dèi" }
+        ],
+        daily: [
+            { english: "Wake up!", chinese: "起床啦！", pinyin: "Wèi k à p" },
+            { english: "Brush your teeth.", chinese: "刷牙。", pinyin: "Bù rǔ sh yǒu tī s" },
+            { english: "Wash your face.", chinese: "洗脸。", pinyin: "Wò sh yǒu fèi s" },
+            { english: "Let's have breakfast.", chinese: "我们吃早餐吧。", pinyin: "Lèi ts hài v bù rèi k fā s t" },
+            { english: "Time to go to school.", chinese: "该上学了。", pinyin: "Tài m tū gòu tū s kū l" },
+            { english: "Let's go home.", chinese: "我们回家吧。", pinyin: "Lèi ts gòu hōu m" },
+            { english: "Take a bath.", chinese: "洗澡。", pinyin: "Tèi k à bā s" },
+            { english: "Go to bed.", chinese: "上床睡觉。", pinyin: "Gòu tū bèi d" },
+            { english: "Good night!", chinese: "晚安！", pinyin: "Gǔ d nài t" },
+            { english: "Sweet dreams!", chinese: "做个好梦！", pinyin: "Swèi t drī m s" },
+            { english: "Good morning, Mom.", chinese: "早上好，妈妈。", pinyin: "" },
+            { english: "Hurry up!", chinese: "快点！", pinyin: "" },
+            { english: "OK.", chinese: "好的。", pinyin: "" },
+            { english: "Breakfast is ready.", chinese: "早饭准备好了。", pinyin: "" },
+            { english: "I'm coming.", chinese: "我来了。", pinyin: "" },
+            { english: "Have some milk.", chinese: "喝点牛奶吧。", pinyin: "" },
+            { english: "Thank you.", chinese: "谢谢你。", pinyin: "" },
+            { english: "Let's go to school.", chinese: "我们去上学吧。", pinyin: "" },
+            { english: "OK. Let's go.", chinese: "好的，走吧。", pinyin: "" },
+            { english: "Hurry up, we are late.", chinese: "快点，我们要迟到了。", pinyin: "" },
+            { english: "I'm ready.", chinese: "我准备好了。", pinyin: "" },
+            { english: "May I come in?", chinese: "我可以进来吗？", pinyin: "" },
+            { english: "Come in, please.", chinese: "请进。", pinyin: "" },
+            { english: "Can I help you?", chinese: "我能帮你吗？", pinyin: "" },
+            { english: "Yes, thank you.", chinese: "好的，谢谢你。", pinyin: "" },
+            { english: "Hi, Mom! I'm home.", chinese: "嗨，妈妈！我回来了。", pinyin: "" },
+            { english: "Welcome home.", chinese: "欢迎回家。", pinyin: "" },
+            { english: "How was your day?", chinese: "今天过得怎么样？", pinyin: "" },
+            { english: "Very good.", chinese: "非常好。", pinyin: "" },
+            { english: "It's time for bed.", chinese: "该睡觉了。", pinyin: "" },
+            { english: "Good night, Mom.", chinese: "晚安，妈妈。", pinyin: "" },
+            { english: "Good night. Sweet dreams.", chinese: "晚安，做个好梦。", pinyin: "" },
+            { english: "Thank you very much.", chinese: "非常感谢你。", pinyin: "" },
+            { english: "You're welcome.", chinese: "不客气。", pinyin: "" },
+            { english: "Sorry.", chinese: "对不起。", pinyin: "" },
+            { english: "That's OK.", chinese: "没关系。", pinyin: "" },
+            { english: "What do you like?", chinese: "你喜欢什么？", pinyin: "" },
+            { english: "I like cats.", chinese: "我喜欢小猫。", pinyin: "" },
+            { english: "Me too.", chinese: "我也是。", pinyin: "" }
+        ],
+        food: [
+            { english: "I'm hungry.", chinese: "我饿了。", pinyin: "Ài m hāng gè rī" },
+            { english: "I'm thirsty.", chinese: "我渴了。", pinyin: "Ài m sē r s tī" },
+            { english: "I want to eat.", chinese: "我想吃东西。", pinyin: "Ài wàng tū yì t" },
+            { english: "I want to drink.", chinese: "我想喝水。", pinyin: "Ài wàng tū drīng k" },
+            { english: "This is delicious!", chinese: "真好吃！", pinyin: "Dì sì yì dì lì shē s" },
+            { english: "I like apples.", chinese: "我喜欢苹果。", pinyin: "Ài lāi k à pǒu s" },
+            { english: "I don't like carrots.", chinese: "我不喜欢胡萝卜。", pinyin: "Ài dōng t lāi k kǎ rǒu t s" },
+            { english: "More, please.", chinese: "请再来一点。", pinyin: "Mò s, pū lì z" },
+            { english: "I'm full.", chinese: "我吃饱了。", pinyin: "Ài m fū l" },
+            { english: "Thank you for the food.", chinese: "谢谢款待。", pinyin: "Sān k yǒu fò tū dì fū d" },
+            { english: "What's for dinner?", chinese: "晚饭吃什么？", pinyin: "" },
+            { english: "Do you like bananas?", chinese: "你喜欢香蕉吗？", pinyin: "" },
+            { english: "Yes, I do.", chinese: "是的，我喜欢。", pinyin: "" },
+            { english: "No, I don't.", chinese: "不，我不喜欢。", pinyin: "" },
+            { english: "Have some water.", chinese: "喝点水吧。", pinyin: "" },
+            { english: "I want some rice.", chinese: "我想要一些米饭。", pinyin: "" },
+            { english: "Can I have some bread?", chinese: "我能吃点面包吗？", pinyin: "" },
+            { english: "Here you are.", chinese: "给你。", pinyin: "" },
+            { english: "I don't like meat.", chinese: "我不喜欢吃肉。", pinyin: "" },
+            { english: "It's delicious.", chinese: "真好吃。", pinyin: "" },
+            { english: "Would you like some soup?", chinese: "你想喝点汤吗？", pinyin: "" },
+            { english: "Yes, please.", chinese: "好的，麻烦了。", pinyin: "" },
+            { english: "No, thanks.", chinese: "不用了，谢谢。", pinyin: "" },
+            { english: "Let's eat breakfast.", chinese: "我们吃早饭吧。", pinyin: "" },
+            { english: "I like milk very much.", chinese: "我非常喜欢牛奶。", pinyin: "" },
+            { english: "Don't eat too much.", chinese: "别吃太多。", pinyin: "" }
+        ],
+        colors: [
+            { english: "What color is it?", chinese: "它是什么颜色的？" },
+            { english: "It's blue.", chinese: "它是蓝色的。" },
+            { english: "It's yellow.", chinese: "它是黄色的。" },
+            { english: "It's green.", chinese: "它是绿色的。" },
+            { english: "It's black.", chinese: "它是黑色的。" },
+            { english: "It's white.", chinese: "它是白色的。" },
+            { english: "It's pink.", chinese: "它是粉色的。" },
+            { english: "It's orange.", chinese: "它是橙色的。" },
+            { english: "I like red.", chinese: "我喜欢红色。" },
+            { english: "Do you like blue?", chinese: "你喜欢蓝色吗？" },
+            { english: "Yes, I do.", chinese: "是的，我喜欢。" },
+            { english: "No, I don't.", chinese: "不，我不喜欢。" },
+            { english: "What color do you like?", chinese: "你喜欢什么颜色？" },
+            { english: "I like white best.", chinese: "我最喜欢白色。" },
+            { english: "It's a yellow banana.", chinese: "它是一根黄色的香蕉。" },
+            { english: "This is a green tree.", chinese: "这是一棵绿色的树。" },
+            { english: "My bag is pink.", chinese: "我的书包是粉色的。" },
+            { english: "How nice!", chinese: "真漂亮！" }
+        ],
+        animals: [
+            { english: "What's this?", chinese: "这是什么？" },
+            { english: "It's a dog.", chinese: "它是一只小狗。" },
+            { english: "What's that?", chinese: "那是什么？" },
+            { english: "It's a cat.", chinese: "它是一只小猫。" },
+            { english: "It's a bird.", chinese: "它是一只小鸟。" },
+            { english: "It's a monkey.", chinese: "它是一只猴子。" },
+            { english: "It's a panda.", chinese: "它是一只熊猫。" },
+            { english: "It's a tiger.", chinese: "它是一只老虎。" },
+            { english: "It's a rabbit.", chinese: "它是一只兔子。" },
+            { english: "I like dogs.", chinese: "我喜欢小狗。" },
+            { english: "Do you like cats?", chinese: "你喜欢小猫吗？" },
+            { english: "Yes, I do.", chinese: "是的，我喜欢。" },
+            { english: "No, I don't.", chinese: "不，我不喜欢。" },
+            { english: "What animal do you like?", chinese: "你喜欢什么动物？" },
+            { english: "I like pandas very much.", chinese: "我非常喜欢熊猫。" },
+            { english: "It's so cute.", chinese: "它真可爱。" },
+            { english: "How lovely!", chinese: "好可爱啊！" },
+            { english: "Look at the elephant.", chinese: "看这头大象。" },
+            { english: "It's big.", chinese: "它很大。" },
+            { english: "This is a small bird.", chinese: "这是一只小鸟。" }
+        ],
+        // 数字
+        numbers: [
+            { english: "Hello! Let's count numbers.", chinese: "你好！我们来数数吧。" },
+            { english: "Great! Let's count.", chinese: "太棒了！我们来数。" },
+            { english: "How old are you?", chinese: "你几岁了？" },
+            { english: "I'm four years old.", chinese: "我4岁了。" },
+            { english: "What's one and two?", chinese: "一加二等于几？" },
+            { english: "One and two is three.", chinese: "一加二等于三。" },
+            { english: "Can you count from one to ten?", chinese: "你能从一数到十吗？" },
+            { english: "Yes, I can.", chinese: "是的，我能。" },
+            { english: "How many pens do you have?", chinese: "你有多少支钢笔？" },
+            { english: "I have ten pens.", chinese: "我有10支钢笔。" },
+            { english: "You are good at counting!", chinese: "你真擅长数数！" },
+            { english: "Thank you!", chinese: "谢谢你！" },
+        ],
+
+        // 家庭
+        family: [
+            { english: "Do you have a happy family?", chinese: "你有一个幸福的家庭吗？" },
+            { english: "Yes, I do.", chinese: "是的，我有。" },
+            { english: "How many people are in your family?", chinese: "你家有几口人？" },
+            { english: "There are eight people in my family.", chinese: "我家有8口人。" },
+            { english: "Who is he?", chinese: "他是谁？" },
+            { english: "He is my father.", chinese: "他是我的爸爸。" },
+            { english: "Who is she?", chinese: "她是谁？" },
+            { english: "She is my mother.", chinese: "她是我的妈妈。" },
+            { english: "Do you love your family?", chinese: "你爱你的家人吗？" },
+            { english: "Yes, I love my family very much.", chinese: "是的，我非常爱我的家人。" },
+            { english: "Your family is so nice!", chinese: "你的家庭真好！" },
+            { english: "Thank you!", chinese: "谢谢你！" },
+        ],
+
+        // 天气
+        weather: [
+            { english: "How's the weather today?", chinese: "今天天气怎么样？" },
+            { english: "It's sunny.", chinese: "今天是晴天。" },
+            { english: "Is it rainy today?", chinese: "今天下雨吗？" },
+            { english: "No, it isn't.", chinese: "不，没有下雨。" },
+            { english: "Do you like sunny days?", chinese: "你喜欢晴天吗？" },
+            { english: "Yes, I like sunny days.", chinese: "是的，我喜欢晴天。" },
+            { english: "What weather do you like?", chinese: "你喜欢什么天气？" },
+            { english: "I like fine days.", chinese: "我喜欢好天气。" },
+            { english: "It's cold today.", chinese: "今天很冷。" },
+            { english: "I need my coat.", chinese: "我需要穿外套。" },
+            { english: "Let's play on a nice day!", chinese: "天气好我们一起玩吧！" },
+            { english: "Great idea!", chinese: "好主意！" },
+        ],
+
+        // 时间
+        time: [
+            { english: "What time is it?", chinese: "现在几点了？" },
+            { english: "It's twenty-five past ten o'clock.", chinese: "现在十点二十五分。" },
+            { english: "What day is it today?", chinese: "今天星期几？" },
+            { english: "It's Monday.", chinese: "今天星期一。" },
+            { english: "Do you go to school on Sunday?", chinese: "你星期天去上学吗？" },
+            { english: "No, I don't.", chinese: "不，我不去。" },
+            { english: "When do you get up?", chinese: "你什么时候起床？" },
+            { english: "I get up at seven.", chinese: "我七点起床。" },
+            { english: "When do you go to bed?", chinese: "你什么时候睡觉？" },
+            { english: "I go to bed at nine.", chinese: "我九点睡觉。" },
+            { english: "You have a good habit!", chinese: "你有一个好习惯！" },
+            { english: "Thank you!", chinese: "谢谢你！" },
+        ],
+
+        // 爱好
+        hobbies: [
+            { english: "What's your hobby?", chinese: "你的爱好是什么？" },
+            { english: "I like reading books.", chinese: "我喜欢看书。" },
+            { english: "Do you like drawing?", chinese: "你喜欢画画吗？" },
+            { english: "Yes, I like drawing.", chinese: "是的，我喜欢画画。" },
+            { english: "Can you swim?", chinese: "你会游泳吗？" },
+            { english: "Yes, I can swim.", chinese: "是的，我会游泳。" },
+            { english: "What do you like to do after class?", chinese: "下课后你喜欢做什么？" },
+            { english: "I like to play games.", chinese: "我喜欢玩游戏。" },
+            { english: "Do you like playing football?", chinese: "你喜欢踢足球吗？" },
+            { english: "Yes, it's fun.", chinese: "是的，很有趣。" },
+            { english: "Hobbies make us happy!", chinese: "爱好让我们快乐！" },
+            { english: "Yes, I think so.", chinese: "是的，我也这么认为。" },
+        ],
+
+        // 身体
+        body: [
+            { english: "Look at my body.", chinese: "看我的身体。" },
+            { english: "You have a head and arms.", chinese: "你有一个头和手臂。" },
+            { english: "Touch your head.", chinese: "摸摸你的头。" },
+            { english: "This is my head.", chinese: "这是我的头。" },
+            { english: "How are you feeling?", chinese: "你感觉怎么样？" },
+            { english: "I'm fine.", chinese: "我很好。" },
+            { english: "Are you happy today?", chinese: "你今天开心吗？" },
+            { english: "Yes, I'm very happy.", chinese: "是的，我非常开心。" },
+            { english: "What's wrong with you?", chinese: "你怎么了？" },
+            { english: "I'm OK, thank you.", chinese: "我没事，谢谢你。" },
+            { english: "Take care of yourself.", chinese: "照顾好你自己。" },
+            { english: "Thank you!", chinese: "谢谢你！" },
+        ],
+
+        // 季节
+        seasons: [
+            { english: "How many seasons are there in a year?", chinese: "一年有几个季节？" },
+            { english: "There are four seasons.", chinese: "有四个季节。" },
+            { english: "What's your favorite season?", chinese: "你最喜欢的季节是什么？" },
+            { english: "My favorite season is spring.", chinese: "我最喜欢的季节是春天。" },
+            { english: "Do you like spring?", chinese: "你喜欢春天吗？" },
+            { english: "Yes, I like spring.", chinese: "是的，我喜欢春天。" },
+            { english: "Is it hot in summer?", chinese: "夏天热吗？" },
+            { english: "Yes, it's very hot.", chinese: "是的，非常热。" },
+            { english: "What can you do in autumn?", chinese: "你在秋天能做什么？" },
+            { english: "I can pick fruits.", chinese: "我能摘水果。" },
+            { english: "Do you like winter?", chinese: "你喜欢冬天吗？" },
+            { english: "Yes, I like winter.", chinese: "是的，我喜欢冬天。" },
+        ],
+
+        // 衣服
+        clothes: [
+            { english: "What are you wearing today?", chinese: "你今天穿了什么？" },
+            { english: "I am wearing a T-shirt.", chinese: "我穿了一件T恤。" },
+            { english: "Do you like this dress?", chinese: "你喜欢这条连衣裙吗？" },
+            { english: "Yes, it's beautiful.", chinese: "是的，它很漂亮。" },
+            { english: "Is it cold today?", chinese: "今天冷吗？" },
+            { english: "Yes, I need a coat.", chinese: "是的，我需要一件外套。" },
+            { english: "What color is your jacket?", chinese: "你的夹克是什么颜色的？" },
+            { english: "My jacket is blue.", chinese: "我的夹克是蓝色的。" },
+            { english: "Put on your shoes.", chinese: "穿上你的鞋子。" },
+            { english: "OK, I will.", chinese: "好的，我会的。" },
+            { english: "Your clothes are nice!", chinese: "你的衣服真好看！" },
+            { english: "Thank you!", chinese: "谢谢你！" },
+        ],
+
+        // 交通工具
+        transport: [
+            { english: "How do you go to school?", chinese: "你怎么去上学？" },
+            { english: "I go to school by bus.", chinese: "我坐公交车去上学。" },
+            { english: "Do you go to school by bike?", chinese: "你骑自行车去上学吗？" },
+            { english: "No, I don't.", chinese: "不，我不骑。" },
+            { english: "Can you drive a car?", chinese: "你会开车吗？" },
+            { english: "No, I can't.", chinese: "不，我不会。" },
+            { english: "What's this?", chinese: "这是什么？" },
+            { english: "It's a plane.", chinese: "这是一架飞机。" },
+            { english: "Where is the train?", chinese: "火车在哪里？" },
+            { english: "It's over there.", chinese: "它在那边。" },
+            { english: "I like taking the subway.", chinese: "我喜欢坐地铁。" },
+            { english: "Me too!", chinese: "我也是！" },
+        ],
+
+        // 学校用品
+        school: [
+            { english: "What's in your schoolbag?", chinese: "你的书包里有什么？" },
+            { english: "I have books and pens.", chinese: "我有书和钢笔。" },
+            { english: "Is this your pencil?", chinese: "这是你的铅笔吗？" },
+            { english: "Yes, it is.", chinese: "是的，它是。" },
+            { english: "Where is your ruler?", chinese: "你的尺子在哪里？" },
+            { english: "It's in my pencil-box.", chinese: "它在我的铅笔盒里。" },
+            { english: "Can I use your eraser?", chinese: "我能用一下你的橡皮吗？" },
+            { english: "Sure, here you are.", chinese: "当然，给你。" },
+            { english: "Do you like your school?", chinese: "你喜欢你的学校吗？" },
+            { english: "Yes, I like it very much.", chinese: "是的，我非常喜欢。" },
+            { english: "Let's study together.", chinese: "我们一起学习吧。" },
+            { english: "OK! Let's go.", chinese: "好的！走吧。" },
+        ],
+
+        // 地点
+        places: [
+            { english: "Where is your home?", chinese: "你的家在哪里？" },
+            { english: "My home is near the school.", chinese: "我的家在学校附近。" },
+            { english: "Where do you study?", chinese: "你在哪里学习？" },
+            { english: "I study at school.", chinese: "我在学校学习。" },
+            { english: "Do you like the park?", chinese: "你喜欢公园吗？" },
+            { english: "Yes, I like playing in the park.", chinese: "是的，我喜欢在公园里玩。" },
+            { english: "Where is the library?", chinese: "图书馆在哪里？" },
+            { english: "It's over there.", chinese: "它在那边。" },
+            { english: "Let's go to the zoo.", chinese: "我们去动物园吧。" },
+            { english: "Great! I love animals.", chinese: "太棒了！我喜欢动物。" },
+            { english: "I love my school and home.", chinese: "我爱我的学校和家。" },
+            { english: "Me too!", chinese: "我也是！" },
+        ],
+
+        // 能力
+        abilities: [
+            { english: "What can you do?", chinese: "你会做什么？" },
+            { english: "I can run and jump.", chinese: "我会跑和跳。" },
+            { english: "Can you sing?", chinese: "你会唱歌吗？" },
+            { english: "Yes, I can sing.", chinese: "是的，我会唱歌。" },
+            { english: "Can you draw a cat?", chinese: "你会画小猫吗？" },
+            { english: "Yes, I can.", chinese: "是的，我会。" },
+            { english: "Can you fly?", chinese: "你会飞吗？" },
+            { english: "No, I can't fly.", chinese: "不，我不会飞。" },
+            { english: "You are great!", chinese: "你真棒！" },
+            { english: "Thank you!", chinese: "谢谢你！" },
+            { english: "Let's play together.", chinese: "我们一起玩吧。" },
+            { english: "OK! Let's go.", chinese: "好的！走吧。" },
+        ]
+    };
+
+    // AI对话数据库
+    const chatDatabase ={
+        greetings: [
+            { robot: "Hello! What's your name?", user: "My name is [name]." },
+            { robot: "Nice to meet you!", user: "Nice to meet you too." },
+            { robot: "How are you today?", user: "I'm fine, thank you." },
+            { robot: "I'm fine too! How old are you?", user: "I'm [age] years old." },
+            { robot: "What color do you like?", user: "I like [color]." },
+            { robot: "What animal do you like?", user: "I like [animal]." },
+            { robot: "What's your favorite food?", user: "I like [food]." },
+            { robot: "What do you like to do?", user: "I like to [activity]." },
+            { robot: "Do you have many friends?", user: "Yes, I have many friends." },
+            { robot: "What's your friend's name?", user: "My friend's name is [friend]." },
+            { robot: "It's time to go. Goodbye!", user: "Goodbye! See you." }
+        ],
+        daily: [
+            { robot: "Good morning! Did you sleep well?", user: "Yes, I slept well." },
+            { robot: "What time did you get up?", user: "I got up at seven o'clock." },
+            { robot: "What did you eat for breakfast?", user: "I ate [food] for breakfast." },
+            { robot: "That sounds delicious! How do you go to school?", user: "I go to school on foot or by bus." },
+            { robot: "What do you do at school?", user: "I learn English, math and art at school." },
+            { robot: "Do you have lunch at school?", user: "Yes, I have lunch at school." },
+            { robot: "That's great! Do you have homework today?", user: "Yes, I have homework today." },
+            { robot: "What do you want to do after school?", user: "I want to [activity] after school." },
+            { robot: "Have a nice day at school!", user: "Thank you! You too." },
+            { robot: "See you later!", user: "See you later!" }
+        ],
+        food: [
+            { robot: "I'm hungry! Do you like food?", user: "Yes, I like food very much." },
+            { robot: "What's your favorite food?", user: "My favorite food is [food]." },
+            { robot: "Why do you like it?", user: "Because it is very yummy." },
+            { robot: "Yummy! Do you like fruits?", user: "Yes, I like fruits a lot." },
+            { robot: "What's your favorite fruit?", user: "My favorite fruit is [fruit]." },
+            { robot: "Do you like vegetables?", user: "Yes, I like vegetables." },
+            { robot: "What vegetable do you like?", user: "I like [vegetable]." },
+            { robot: "That's good! Eating healthy food makes you strong!", user: "Yes, I want to be strong!" },
+            { robot: "Do you drink milk every day?", user: "Yes, I drink milk every day." },
+            { robot: "Great! Milk is good for you.", user: "Thank you! I know." }
+        ],
+        colors: [
+            { robot: "I love colors! What's your favorite color?", user: "My favorite color is [color]." },
+            { robot: "That's a beautiful color! What things are [color]?", user: "[things] are [color]." },
+            { robot: "What color is the sky?", user: "The sky is blue." },
+            { robot: "What color is the sun?", user: "The sun is yellow." },
+            { robot: "What color is the grass?", user: "The grass is green." },
+            { robot: "What color is the snow?", user: "The snow is white." },
+            { robot: "Do you like red?", user: "Yes, I like red very much." },
+            { robot: "Do you like blue?", user: "Yes, I like blue a lot." },
+            { robot: "What color is your schoolbag?", user: "My schoolbag is [color]." },
+            { robot: "Colors make the world nice!", user: "Yes, I love all colors." }
+        ],
+        animals: [
+            { robot: "I love animals! Do you like animals?", user: "Yes, I like animals very much." },
+            { robot: "What's your favorite animal?", user: "My favorite animal is [animal]." },
+            { robot: "Why do you like it?", user: "Because it is very cute." },
+            { robot: "That's a great animal! What sound does a [animal] make?", user: "A [animal] says [sound]." },
+            { robot: "Where do [animal]s live?", user: "They live in the forest or zoo." },
+            { robot: "Do you have a pet?", user: "Yes, I have a [pet]." },
+            { robot: "What's your pet's name?", user: "My pet's name is [name]." },
+            { robot: "What can your pet do?", user: "It can run and jump." },
+            { robot: "Do you like big animals or small animals?", user: "I like small animals." },
+            { robot: "I wish I had a pet! Animals are so much fun!", user: "Yes, they are fun and lovely." }
+        ],
+        numbers: [
+            { robot: "Hello! Let's count numbers.", user: "Great! Let's count." },
+            { robot: "How old are you?", user: "I'm [age] years old." },
+            { robot: "What's one and two?", user: "One and two is three." },
+            { robot: "Can you count from one to ten?", user: "Yes, I can." },
+            { robot: "How many pens do you have?", user: "I have [number] pens." },
+            { robot: "You are good at counting!", user: "Thank you!" }
+        ],
+        family: [
+            { robot: "Do you have a happy family?", user: "Yes, I do." },
+            { robot: "How many people are in your family?", user: "There are [number] people in my family." },
+            { robot: "Who is he?", user: "He is my father." },
+            { robot: "Who is she?", user: "She is my mother." },
+            { robot: "Do you love your family?", user: "Yes, I love my family very much." },
+            { robot: "Your family is so nice!", user: "Thank you!" }
+        ],
+        weather: [
+            { robot: "How's the weather today?", user: "It's sunny." },
+            { robot: "Is it rainy today?", user: "No, it isn't." },
+            { robot: "Do you like sunny days?", user: "Yes, I like sunny days." },
+            { robot: "What weather do you like?", user: "I like fine days." },
+            { robot: "It's cold today.", user: "I need my coat." },
+            { robot: "Let's play on a nice day!", user: "Great idea!" }
+        ],
+        time: [
+            { robot: "What time is it?", user: "It's [o'clock] o'clock." },
+            { robot: "What day is it today?", user: "It's Monday." },
+            { robot: "Do you go to school on Sunday?", user: "No, I don't." },
+            { robot: "When do you get up?", user: "I get up at seven." },
+            { robot: "When do you go to bed?", user: "I go to bed at nine." },
+            { robot: "You have a good habit!", user: "Thank you!" }
+        ],
+        hobbies: [
+            { robot: "What's your hobby?", user: "I like reading books." },
+            { robot: "Do you like drawing?", user: "Yes, I like drawing." },
+            { robot: "Can you swim?", user: "Yes, I can swim." },
+            { robot: "What do you like to do after class?", user: "I like to play games." },
+            { robot: "Do you like playing football?", user: "Yes, it's fun." },
+            { robot: "Hobbies make us happy!", user: "Yes, I think so." }
+        ],
+        body: [
+            { robot: "Look at my body.", user: "You have a head and arms." },
+            { robot: "Touch your head.", user: "This is my head." },
+            { robot: "How are you feeling?", user: "I'm fine." },
+            { robot: "Are you happy today?", user: "Yes, I'm very happy." },
+            { robot: "What's wrong with you?", user: "I'm OK, thank you." },
+            { robot: "Take care of yourself.", user: "Thank you!" }
+        ],
+        // 季节
+        seasons: [
+            { robot: "How many seasons are there in a year?", user: "There are four seasons." },
+            { robot: "What's your favorite season?", user: "My favorite season is [season]." },
+            { robot: "Do you like spring?", user: "Yes, I like spring." },
+            { robot: "Is it hot in summer?", user: "Yes, it's very hot." },
+            { robot: "What can you do in autumn?", user: "I can pick fruits." },
+            { robot: "Do you like winter?", user: "Yes, I like winter." }
+        ],
+
+        // 衣服
+        clothes: [
+            { robot: "What are you wearing today?", user: "I am wearing a T-shirt." },
+            { robot: "Do you like this dress?", user: "Yes, it's beautiful." },
+            { robot: "Is it cold today?", user: "Yes, I need a coat." },
+            { robot: "What color is your jacket?", user: "My jacket is blue." },
+            { robot: "Put on your shoes.", user: "OK, I will." },
+            { robot: "Your clothes are nice!", user: "Thank you!" }
+        ],
+
+        // 交通工具
+        transport: [
+            { robot: "How do you go to school?", user: "I go to school by bus." },
+            { robot: "Do you go to school by bike?", user: "No, I don't." },
+            { robot: "Can you drive a car?", user: "No, I can't." },
+            { robot: "What's this?", user: "It's a plane." },
+            { robot: "Where is the train?", user: "It's over there." },
+            { robot: "I like taking the subway.", user: "Me too!" }
+        ],
+
+        // 学校用品
+        school: [
+            { robot: "What's in your schoolbag?", user: "I have books and pens." },
+            { robot: "Is this your pencil?", user: "Yes, it is." },
+            { robot: "Where is your ruler?", user: "It's in my pencil-box." },
+            { robot: "Can I use your eraser?", user: "Sure, here you are." },
+            { robot: "Do you like your school?", user: "Yes, I like it very much." },
+            { robot: "Let's study together.", user: "OK! Let's go." }
+        ],
+
+        // 地点/场所
+        places: [
+            { robot: "Where is your home?", user: "My home is near the school." },
+            { robot: "Where do you study?", user: "I study at school." },
+            { robot: "Do you like the park?", user: "Yes, I like playing in the park." },
+            { robot: "Where is the library?", user: "It's over there." },
+            { robot: "Let's go to the zoo.", user: "Great! I love animals." },
+            { robot: "I love my school and home.", user: "Me too!" }
+        ],
+
+        // 能力/动作
+        abilities: [
+            { robot: "What can you do?", user: "I can run and jump." },
+            { robot: "Can you sing?", user: "Yes, I can sing." },
+            { robot: "Can you draw a cat?", user: "Yes, I can." },
+            { robot: "Can you fly?", user: "No, I can't fly." },
+            { robot: "You are great!", user: "Thank you!" },
+            { robot: "Let's play together.", user: "OK! Let's go." }
+        ]
+    };
+
+    // 初始化函数
+    function init() {
+        // 加载句子库
+        loadSentences(currentTheme);
+
+        // 初始化语音识别（如果浏览器支持）
+        initSpeechRecognition();
+
+        // 绑定事件监听器
+        bindEventListeners();
+    }
+
+    // 绑定事件监听器
+    function bindEventListeners() {
+        // 选项卡切换
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+
+        // 任务按钮点击
+        document.querySelectorAll('.task-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const task = button.getAttribute('data-task');
+                startTask(task);
+            });
+        });
+
+        // 主题按钮点击
+        document.querySelectorAll('.theme-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const theme = button.getAttribute('data-theme');
+                changeTheme(theme);
+            });
+        });
+
+        // 学习选中的句子
+        document.getElementById('learn-selected').addEventListener('click', () => {
+            if (selectedSentences.length > 0) {
+                // 将索引转换为实际的句子对象
+                const sentencesToLearn = selectedSentences.map(index => sentenceDatabase[currentTheme][index]);
+                learnSentences(sentencesToLearn);
+            } else {
+            }
+        });
+
+        // 模态框控制
+        document.getElementById('close-modal').addEventListener('click', closeModal);
+        document.getElementById('prev-sentence').addEventListener('click', showPreviousSentence);
+        document.getElementById('next-sentence').addEventListener('click', showNextSentence);
+        document.getElementById('play-sentence').addEventListener('click', playCurrentSentence);
+        document.getElementById('record-modal-sentence').addEventListener('click', recordCurrentSentence);
+
+        // 声音开关
+        document.getElementById('sound-toggle').addEventListener('click', toggleSound);
+
+        // AI对话相关
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        document.getElementById('voice-input').addEventListener('click', toggleVoiceInput);
+
+        // 快捷回答
+        document.querySelectorAll('.quick-response').forEach(button => {
+            button.addEventListener('click', () => {
+                const text = button.textContent;
+                document.getElementById('chat-input').value = text;
+                sendChatMessage();
+            });
+        });
+
+        // 对话主题切换
+        document.getElementById('chat-topic').addEventListener('change', resetChat);
+
+        // 明天继续学习按钮
+        document.getElementById('next-day').addEventListener('click', resetDailyPlan);
+    }
+    // 切换语音输入
+    function toggleVoiceInput() {
+        const voiceButton = document.getElementById('voice-input');
+
+        if (!recognition) {
+            alert('您的浏览器不支持语音识别功能。');
+            return;
+        }
+
+        if (isRecording) {
+            stopVoiceRecording();
+        } else {
+            startVoiceRecording();
+        }
+    }
+    // 切换选项卡
+    function switchTab(tabId) {
+        // 更新选项卡按钮状态
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+
+        // 更新内容显示
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+        document.getElementById(tabId).classList.remove('hidden');
+
+        // 如果切换到AI对话，初始化对话
+        if (tabId === 'ai-chat' && document.querySelectorAll('#chat-container .dialog-bubble').length === 1) {
+            changeAITheme(todayLearningTheme);
+            resetChat();
+        }
+
+        // 如果切换到句子库，并且有今日学习主题，则选中对应的主题
+        if (tabId === 'sentence-library' && todayLearningTheme) {
+            changeTheme(todayLearningTheme);
+        }
+    }
+
+    // 加载句子
+    function loadSentences(theme) {
+        const container = document.getElementById('sentences-container');
+        container.innerHTML = '';
+
+        sentenceDatabase[theme].forEach((sentence, index) => {
+            const sentenceCard = document.createElement('div');
+            sentenceCard.className = 'sentence-card';
+            sentenceCard.setAttribute('data-index', index);
+
+            sentenceCard.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+                            <i class="fa fa-check text-gray-400"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-lg">${sentence.english}</p>
+                            <p class="text-sm text-gray-600">${sentence.chinese}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="play-sentence p-2 text-primary hover:text-blue-700" title="播放句子">
+                                <i class="fa fa-volume-up"></i>
+                            </button>
+                            <button class="record-sentence p-2 text-secondary hover:text-orange-700" title="录制跟读">
+                                <i class="fa fa-microphone"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            // 点击选中/取消选中
+            sentenceCard.addEventListener('click', (e) => {
+                // 如果点击的是播放按钮，不切换选中状态
+                if (e.target.closest('.play-sentence')) {
+                    return;
+                }
+
+                toggleSentenceSelection(sentenceCard, index);
+            });
+
+            // 播放按钮点击
+            sentenceCard.querySelector('.play-sentence').addEventListener('click', () => {
+                playSentence(sentence.english);
+            });
+
+            // 录音按钮点击
+            sentenceCard.querySelector('.record-sentence').addEventListener('click', () => {
+                recordSentence(sentence);
+            });
+
+            container.appendChild(sentenceCard);
+        });
+    }
+
+    // 切换句子选中状态
+    function toggleSentenceSelection(card, index) {
+        const checkIcon = card.querySelector('.fa-check');
+        const checkCircle = card.querySelector('.w-8');
+
+        if (card.classList.contains('active')) {
+            // 取消选中
+            card.classList.remove('active');
+            checkIcon.classList.remove('text-white');
+            checkIcon.classList.add('text-gray-400');
+            checkCircle.classList.remove('bg-primary');
+            checkCircle.classList.add('bg-gray-100');
+
+            // 从选中列表中移除
+            selectedSentences = selectedSentences.filter(i => i !== index);
+        } else {
+            // 选中
+            card.classList.add('active');
+            checkIcon.classList.remove('text-gray-400');
+            checkIcon.classList.add('text-white');
+            checkCircle.classList.remove('bg-gray-100');
+            checkCircle.classList.add('bg-primary');
+
+            // 添加到选中列表
+            selectedSentences.push(index);
+        }
+    }
+
+    // 改变主题
+    function changeTheme(theme) {
+        // 更新主题按钮状态
+        document.querySelectorAll('.theme-button').forEach(button => {
+            button.classList.remove('active', 'bg-primary', 'text-white');
+            button.classList.add('bg-gray-200', 'text-gray-700');
+        });
+        document.querySelector(`[data-theme="${theme}"]`).classList.remove('bg-gray-200', 'text-gray-700');
+        document.querySelector(`[data-theme="${theme}"]`).classList.add('active', 'bg-primary', 'text-white');
+
+        // 更新当前主题并加载句子
+        currentTheme = theme;
+        selectedSentences = [];
+        loadSentences(theme);
+    }
+
+    function changeAITheme(theme){
+        document.getElementById('chat-topic').value = theme;
+    }
+
+    // 开始任务
+    function startTask(task) {
+        currentTask = task;
+
+        switch (task) {
+            case 'listen':
+                // 随机选择一种主题类型
+                const themes = Object.keys(sentenceDatabase);
+                todayLearningTheme = themes[Math.floor(Math.random() * themes.length)];
+
+                // 加载该主题下的所有句子
+                const todaySentences = [...sentenceDatabase[todayLearningTheme]];
+                learnSentences(todaySentences);
+                break;
+
+            case 'speak':
+                // 打开AI对话选项卡
+                switchTab('sentence-library');
+                // 提示用户开始练习口语
+                break;
+
+            case 'chat':
+                // 打开AI对话选项卡并开始对话
+                switchTab('ai-chat');
+                break;
+        }
+    }
+
+    // 获取随机句子
+    function getRandomSentences(theme, count) {
+        const sentences = [...sentenceDatabase[theme]];
+        const randomSentences = [];
+
+        for (let i = 0; i < count; i++) {
+            if (sentences.length === 0) break;
+
+            const randomIndex = Math.floor(Math.random() * sentences.length);
+            randomSentences.push(sentences[randomIndex]);
+            sentences.splice(randomIndex, 1);
+        }
+
+        return randomSentences;
+    }
+
+    // 学习句子
+    function learnSentences(sentences) {
+        learningSentences = sentences;
+        currentSentenceIndex = 0;
+
+        // 显示模态框
+        document.getElementById('modal-title').textContent = '学习句子';
+        document.getElementById('learning-modal').classList.remove('hidden');
+
+        // 显示第一个句子
+        showCurrentSentence();
+    }
+
+    // 显示当前句子
+    function showCurrentSentence() {
+        const sentence = learningSentences[currentSentenceIndex];
+        const modalContent = document.getElementById('modal-content');
+
+        modalContent.innerHTML = `
+                <div class="text-center mb-4">
+                    <div class="text-3xl font-bold mb-2">${sentence.english}</div>
+                    <div class="text-xl text-gray-600 mb-1">${sentence.chinese}</div>
+                </div>
+                <div class="flex justify-center">
+                    <div class="inline-flex flex-wrap gap-1 rounded-md shadow-sm" style="width: 100%">
+                        ${learningSentences.map((_, index) => `
+                            <button class="px-3 py-1 rounded-lg border ${index === currentSentenceIndex ? 'bg-primary text-white' : 'bg-white text-gray-500 hover:bg-gray-50'} border-gray-300">
+                                ${index + 1}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+        // 更新按钮状态
+        document.getElementById('prev-sentence').disabled = currentSentenceIndex === 0;
+        document.getElementById('prev-sentence').classList.toggle('opacity-50', currentSentenceIndex === 0);
+        document.getElementById('prev-sentence').classList.toggle('cursor-not-allowed', currentSentenceIndex === 0);
+
+        document.getElementById('next-sentence').disabled = currentSentenceIndex === learningSentences.length;
+        document.getElementById('next-sentence').classList.toggle('opacity-50', currentSentenceIndex === learningSentences.length - 1);
+        document.getElementById('next-sentence').classList.toggle('cursor-not-allowed', currentSentenceIndex === learningSentences.length - 1);
+
+        // 自动播放句子
+        playCurrentSentence();
+    }
+
+    // 显示上一个句子
+    function showPreviousSentence() {
+        if (currentSentenceIndex > 0) {
+            currentSentenceIndex--;
+            showCurrentSentence();
+        }
+    }
+
+    // 显示下一个句子
+    function showNextSentence() {
+        if (currentSentenceIndex < learningSentences.length - 1) {
+            currentSentenceIndex++;
+            showCurrentSentence();
+        } else {
+            // 如果是最后一个句子，完成任务
+            console.log('到达最后一个句子，准备完成任务');
+            console.log('当前句子索引:', currentSentenceIndex);
+            console.log('句子总数:', learningSentences.length);
+
+            // 确保任务已设置
+            if (currentTask) {
+                console.log('完成任务:', currentTask);
+                completeTask();
+            } else {
+                console.log('警告: currentTask 未设置');
+            }
+
+            // 关闭模态框
+            closeModal();
+            if(currentTask==='listen'){
+                switchTab('sentence-library');
+                currentTask='speak';
+            }else{
+                switchTab('ai-chat');
+            }
+
+        }
+    }
+
+    // 播放当前句子
+    function playCurrentSentence() {
+        const sentence = learningSentences[currentSentenceIndex];
+        playSentence(sentence.english);
+    }
+
+    function isMobile() {
+        return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    // 播放句子（文本转语音）
+    function playSentence(text) {
+        if (!soundEnabled) return;
+
+        if (isMobile()) {
+            // 移动端特殊处理
+            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                playSentenceIOS(text);
+            } else if (/Android/i.test(navigator.userAgent)) {
+                playSentenceAndroid(text);
+            }
+        }
+        // 检查浏览器支持
+        if (!('speechSynthesis' in window)) {
+            console.error('浏览器不支持语音合成');
+            // 可以降级使用音频文件
+            playAudioFile(text);
+            return;
+        }
+        // 使用Web Speech API的语音合成
+        if ('speechSynthesis' in window) {
+            // 停止当前正在播放的语音
+            window.speechSynthesis.cancel();
+
+            // 创建新的语音
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; // 稍微放慢语速
+            utterance.pitch = 1.1; // 稍微提高音调，更适合儿童
+
+            // 播放语音
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+    function playAudioFile(text) {
+        // 使用在线 TTS 服务生成音频
+        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(text)}`;
+        const audio = new Audio(audioUrl);
+        audio.play().catch(e => console.error('播放失败:', e));
+    }
+    function playSentenceAndroid(text) {
+        if (!soundEnabled) return;
+
+        // 确保在用户交互后执行
+        if (document.hasFocus()) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.volume = 1.0; // 最大音量
+
+            window.speechSynthesis.speak(utterance);
+        } else {
+            // 如果页面失去焦点，尝试重新获取
+            document.addEventListener('click', function playOnce() {
+                playSentence(text);
+                document.removeEventListener('click', playOnce);
+            }, { once: true });
+        }
+    }
+    function playSentenceIOS(text) {
+        if (!soundEnabled) return;
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+
+        // iOS 需要设置 voicesloaded
+        const setVoice = () => {
+            const voices = window.speechSynthesis.getVoices();
+            const englishVoice = voices.find(v => v.lang.includes('en'));
+            if (englishVoice) {
+                utterance.voice = englishVoice;
+            }
+        };
+
+        // 等待声音加载
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = setVoice;
+        }
+
+        setVoice();
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // 关闭模态框
+    function closeModal() {
+        document.getElementById('learning-modal').classList.add('hidden');
+    }
+
+    // 完成任务
+    function completeTask() {
+        if (!completedTasks.includes(currentTask)) {
+            completedTasks.push(currentTask);
+        } else {
+        }
+
+        // 更新进度条
+        updateProgress();
+
+        // 启用下一个任务
+        enableNextTask();
+
+        // 显示任务完成提示
+
+    }
+
+    // 更新进度
+    function updateProgress() {
+        const totalTasks = 3;
+        const completedCount = completedTasks.length;
+        const progressPercentage = (completedCount / totalTasks) * 100;
+
+        document.getElementById('progress-text').textContent = `${completedCount}/${totalTasks}`;
+        document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+
+        // 如果所有任务都完成了，显示奖励
+        if (completedCount === totalTasks) {
+            document.getElementById('reward-section').classList.remove('hidden');
+        }
+    }
+
+    // 启用下一个任务
+    function enableNextTask() {
+        const tasks = ['listen', 'speak', 'chat'];
+        const currentTaskIndex = tasks.indexOf(currentTask);
+
+        console.log('任务顺序:', tasks);
+        console.log('当前任务索引:', currentTaskIndex);
+
+        if (currentTaskIndex !== -1 && currentTaskIndex < tasks.length - 1) {
+            const nextTask = tasks[currentTaskIndex + 1];
+            console.log('尝试启用下一个任务:', nextTask);
+
+            // 使用更精确的选择器
+            const nextTaskButton = document.querySelector(`button[data-task="${nextTask}"]`);
+
+            console.log('找到的按钮元素:', nextTaskButton);
+
+            if (nextTaskButton) {
+                // 移除所有可能的禁用状态
+                nextTaskButton.disabled = false;
+                nextTaskButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                nextTaskButton.classList.add('bg-secondary'); // 高亮显示
+
+                // 确保按钮可以点击
+                nextTaskButton.style.pointerEvents = 'auto';
+                nextTaskButton.style.opacity = '1';
+
+                console.log('下一个任务按钮已启用:', nextTask);
+            } else {
+                console.error('未找到下一个任务按钮:', nextTask);
+                // 列出所有任务按钮
+                const allTaskButtons = document.querySelectorAll('[data-task]');
+                console.log('所有任务按钮:', allTaskButtons);
+                allTaskButtons.forEach(btn => {
+                    console.log('按钮data-task属性:', btn.getAttribute('data-task'));
+                });
+            }
+        } else {
+            console.log('没有下一个任务或当前任务索引无效');
+        }
+    }
+
+    // 重置每日计划
+    function resetDailyPlan() {
+        completedTasks = [];
+        currentTask = null;
+
+        console.log('重置每日计划');
+
+
+
+        // 禁用所有任务按钮
+        document.querySelectorAll('.task-button').forEach(button => {
+            button.disabled = true;
+            button.classList.add('opacity-50', 'cursor-not-allowed');
+            button.classList.remove('bg-secondary'); // 移除高亮
+            button.style.pointerEvents = 'none';
+            button.style.opacity = '0.5';
+        });
+
+        // 启用第一个任务
+        const firstTaskButton = document.querySelector('[data-task="listen"]');
+        if (firstTaskButton) {
+            firstTaskButton.disabled = false;
+            firstTaskButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            firstTaskButton.style.pointerEvents = 'auto';
+            firstTaskButton.style.opacity = '1';
+            console.log('第一个任务已启用');
+        }
+
+
+    }
+
+    // 初始化语音识别
+    function initSpeechRecognition() {
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chat-input').value = transcript;
+                sendChatMessage();
+            };
+
+            recognition.onerror = (event) => {
+                console.error('语音识别错误:', event.error);
+                stopVoiceRecording();
+            };
+
+            recognition.onend = () => {
+                stopVoiceRecording();
+            };
+        }
+    }
+
+    // 录制句子
+    function recordSentence(sentence) {
+        currentRecordingSentence = sentence;
+
+        // 检查浏览器支持
+        if (!('MediaRecorder' in window) || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('您的浏览器不支持音频录制功能。');
+            return;
+        }
+
+        // 请求麦克风权限
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                // 创建音频录制器
+                audioRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                // 开始录制
+                audioRecorder.start();
+                isRecording = true;
+
+                // 更新UI显示录制状态
+                updateRecordingUI(true);
+
+                // 录制数据处理
+                audioRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                // 录制结束处理
+                audioRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+
+                    // 播放录制的音频
+                    playRecordedAudio(audioUrl);
+
+                    // 比较录制的音频与原句
+                    compareRecordingWithOriginal(sentence, audioUrl);
+
+                    // 停止所有轨道
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                // 设置录制时长（5秒）
+                setTimeout(() => {
+                    if (audioRecorder && audioRecorder.state !== 'inactive') {
+                        audioRecorder.stop();
+                        isRecording = false;
+                        updateRecordingUI(false);
+                    }
+                }, 5000);
+            })
+            .catch(error => {
+                console.error('获取麦克风权限失败:', error);
+                alert('无法访问麦克风，请确保您已授予麦克风权限。');
+            });
+    }
+
+    // 更新录制UI状态
+    function updateRecordingUI(isRecording) {
+        const recordButtons = document.querySelectorAll('.record-sentence');
+
+        recordButtons.forEach(button => {
+            if (isRecording) {
+                button.classList.remove('text-secondary', 'hover:text-orange-700');
+                button.classList.add('text-red-500', 'animate-pulse');
+                button.querySelector('i').classList.remove('fa-microphone');
+                button.querySelector('i').classList.add('fa-stop');
+            } else {
+                button.classList.remove('text-red-500', 'animate-pulse');
+                button.classList.add('text-secondary', 'hover:text-orange-700');
+                button.querySelector('i').classList.remove('fa-stop');
+                button.querySelector('i').classList.add('fa-microphone');
+            }
+        });
+    }
+
+    // 播放录制的音频
+    function playRecordedAudio(audioUrl) {
+        const audio = new Audio(audioUrl);
+        audio.play().catch(error => {
+            console.error('播放录制音频失败:', error);
+        });
+    }
+
+    // 比较录制的音频与原句
+    function compareRecordingWithOriginal(sentence, recordingUrl) {
+        // 在实际应用中，这里可以使用语音识别API来比较
+        // 由于浏览器端限制，这里简化为模拟比较结果
+
+        // 模拟比较延迟
+        setTimeout(() => {
+            // 随机生成比较结果（80%的概率正确）
+            const isCorrect = Math.random() < 0.8;
+
+            if (isCorrect) {
+                showFeedback('太棒了！你读得很好！', 'success');
+            } else {
+                showFeedback('再试一次吧！你可以做得更好！', 'error');
+                // 重新播放原句
+                playSentence(sentence.english);
+            }
+        }, 1000);
+    }
+
+    // 显示反馈信息
+    function showFeedback(message, type) {
+        // 创建反馈元素
+        const feedback = document.createElement('div');
+        feedback.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 ${type === 'success' ? 'bg-green-100 text-green-800 border-l-4 border-green-500' : 'bg-red-100 text-red-800 border-l-4 border-red-500'}`;
+        feedback.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fa ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+
+        // 添加到页面
+        document.body.appendChild(feedback);
+
+        // 淡入效果
+        setTimeout(() => {
+            feedback.classList.add('opacity-90');
+        }, 100);
+
+        // 3秒后淡出并移除
+        setTimeout(() => {
+            feedback.classList.add('opacity-0');
+            setTimeout(() => {
+                document.body.removeChild(feedback);
+            }, 300);
+        }, 3000);
+    }
+
+    // 录制当前句子（模态框中）
+    function recordCurrentSentence() {
+        if (learningSentences.length > 0 && currentSentenceIndex < learningSentences.length) {
+            const currentSentence = learningSentences[currentSentenceIndex];
+            recordSentence(currentSentence);
+        }
+    }
+
+    // 开始语音录制
+    function startVoiceRecording() {
+        if (!recognition) return;
+
+        try {
+            recognition.start();
+            isRecording = true;
+
+            const voiceButton = document.getElementById('voice-input');
+            voiceButton.classList.remove('bg-gray-200');
+            voiceButton.classList.add('bg-red-500');
+            voiceButton.querySelector('i').classList.remove('text-gray-700');
+            voiceButton.querySelector('i').classList.add('text-white');
+        } catch (error) {
+            console.error('启动语音识别失败:', error);
+        }
+    }
+
+    // 停止语音录制
+    function stopVoiceRecording() {
+        if (!recognition) return;
+
+        recognition.stop();
+        isRecording = false;
+
+        const voiceButton = document.getElementById('voice-input');
+        voiceButton.classList.remove('bg-red-500');
+        voiceButton.classList.add('bg-gray-200');
+        voiceButton.querySelector('i').classList.remove('text-white');
+        voiceButton.querySelector('i').classList.add('text-gray-700');
+    }
+
+    // 发送聊天消息
+    function sendChatMessage() {
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+
+        if (message === '') return;
+
+        // 添加用户消息到聊天窗口
+        addChatMessage(message, 'user');
+
+        // 清空输入框
+        input.value = '';
+
+        // 生成AI回复
+        setTimeout(() => {
+            const reply = generateAIReply(message);
+            addChatMessage(reply, 'robot');
+
+            // 播放AI回复
+            playSentence(reply);
+
+            // 增加对话计数
+            chatMessageCount++;
+
+            // 检查对话是否完成（例如：完成了5轮对话）
+            if (chatMessageCount >= 5 && currentTask === 'chat') {
+                debugger
+                // 完成对话任务
+                completeTask();
+
+                // 显示完成消息
+                setTimeout(() => {
+                    alert('恭喜你完成了今天的所有学习任务！你真棒！');
+                    // 重置每日计划
+                    resetDailyPlan();
+                }, 1500);
+            }
+        }, 1000);
+    }
+
+    // 添加聊天消息
+    function addChatMessage(message, sender) {
+        const chatContainer = document.getElementById('chat-container');
+        const messageDiv = document.createElement('div');
+
+        messageDiv.className = `dialog-bubble ${sender === 'user' ? 'dialog-bubble-user' : 'dialog-bubble-robot'}`;
+        messageDiv.innerHTML = `<p>${message}</p>`;
+
+        chatContainer.appendChild(messageDiv);
+
+        // 滚动到底部
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // 生成AI回复
+    function generateAIReply(userMessage) {
+        const topic = document.getElementById('chat-topic').value;
+        const dialogues = chatDatabase[topic];
+
+        // 简单的关键词匹配
+        userMessage = userMessage.toLowerCase();
+
+        // 检查是否有预设的回复
+        for (let i = 0; i < dialogues.length; i++) {
+            const userPattern = dialogues[i].user.toLowerCase();
+
+            // 检查是否匹配当前对话流程
+            if (i < dialogues.length - 1) {
+                const lastRobotMessage = document.querySelectorAll('#chat-container .dialog-bubble-robot p:last-child');
+                if (lastRobotMessage.length > 0 && lastRobotMessage[lastRobotMessage.length - 1].textContent === dialogues[i].robot) {
+                    return dialogues[i + 1].robot;
+                }
+            }
+        }
+
+        // 如果没有匹配到，返回一个通用回复
+        const genericReplies = [
+            "That's interesting! Tell me more.",
+            "I see! What else do you like?",
+            "Great job! You're speaking English well!",
+            "Can you say that again?",
+            "That's correct! Well done!",
+            "I like talking to you!",
+            "What do you want to talk about?",
+            "Do you have any questions?",
+            "You're learning fast!",
+            "Let's practice more English together!"
+        ];
+
+        return genericReplies[Math.floor(Math.random() * genericReplies.length)];
+    }
+
+    // 重置聊天
+    function resetChat() {
+        // 重置对话计数
+        chatMessageCount = 0;
+
+        const chatContainer = document.getElementById('chat-container');
+
+        // 保留初始消息
+        chatContainer.innerHTML = `
+                <div class="dialog-bubble dialog-bubble-robot">
+                    <p>你好！我是你的英语学习伙伴。今天我们来练习英语对话吧！</p>
+                </div>
+            `;
+
+        // 根据主题生成第一个问题
+        const topic = document.getElementById('chat-topic').value;
+        const firstQuestion = chatDatabase[topic][0].robot;
+
+        setTimeout(() => {
+            addChatMessage(firstQuestion, 'robot');
+            playSentence(firstQuestion);
+        }, 500);
+    }
+
+    // 切换声音
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+
+        const soundButton = document.getElementById('sound-toggle');
+
+        if (soundEnabled) {
+            soundButton.innerHTML = '<i class="fa fa-volume-up"></i>';
+        } else {
+            soundButton.innerHTML = '<i class="fa fa-volume-off"></i>';
+            // 停止当前播放的语音
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body></html>
