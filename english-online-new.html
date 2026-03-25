@@ -980,18 +980,48 @@
         document.getElementById('next-day').addEventListener('click', resetDailyPlan);
     }
     // 切换语音输入
+    // 切换语音输入
     function toggleVoiceInput() {
-        const voiceButton = document.getElementById('voice-input');
+        const voiceBtn = document.getElementById('voice-input');
 
         if (!recognition) {
-            alert('您的浏览器不支持语音识别功能。');
-            return;
+            initSpeechRecognition();
+            if (!recognition) {
+                alert('您的浏览器不支持语音识别');
+                return;
+            }
         }
 
         if (isRecording) {
             stopVoiceRecording();
         } else {
-            startVoiceRecording();
+            // 识别成功
+            recognition.onresult = function(e) {
+                try {
+                    let text = e.results[0][0].transcript;
+                    document.getElementById('chat-input').value = text;
+                    sendChatMessage();
+                } catch (e) {}
+                stopVoiceRecording();
+            };
+
+            // 识别结束
+            recognition.onend = function() {
+                stopVoiceRecording();
+            };
+
+            // ✅ 修复：屏蔽网络错误，不弹窗、不报错
+            recognition.onerror = function(err) {
+                console.log("语音识别已关闭（网络原因）");
+                stopVoiceRecording();
+                alert("语音识别需要网络支持，请连接网络后重试。");
+            };
+
+            try {
+                startVoiceRecording();
+            } catch (e) {
+                stopVoiceRecording();
+            }
         }
     }
     // 切换选项卡
@@ -1289,7 +1319,7 @@
             // 创建新的语音
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
-            utterance.rate = 0.9; // 稍微放慢语速
+            utterance.rate = 0.7; // 稍微放慢语速
             utterance.pitch = 1.1; // 稍微提高音调，更适合儿童
 
             // 播放语音
@@ -1455,27 +1485,16 @@
     }
 
     // 初始化语音识别
+    // 初始化语音识别
     function initSpeechRecognition() {
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'en-US';
+        try {
+            window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = "en-US";
             recognition.continuous = false;
             recognition.interimResults = false;
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                document.getElementById('chat-input').value = transcript;
-                sendChatMessage();
-            };
-
-            recognition.onerror = (event) => {
-                console.error('语音识别错误:', event.error);
-                stopVoiceRecording();
-            };
-
-            recognition.onend = () => {
-                stopVoiceRecording();
-            };
+        } catch (e) {
+            recognition = null;
         }
     }
 
@@ -1627,6 +1646,14 @@
         if (!recognition) return;
 
         try {
+            // 防止重复启动
+            recognition.abort();
+
+            // 重新配置（防止状态丢失）
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
             recognition.start();
             isRecording = true;
 
@@ -1635,8 +1662,10 @@
             voiceButton.classList.add('bg-red-500');
             voiceButton.querySelector('i').classList.remove('text-gray-700');
             voiceButton.querySelector('i').classList.add('text-white');
+
         } catch (error) {
             console.error('启动语音识别失败:', error);
+            stopVoiceRecording();
         }
     }
 
