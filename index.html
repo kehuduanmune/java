@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 关键：适配移动端屏幕 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Voice Input</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+
+        /* 输入框+按钮容器 */
+        .voice-input-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* 输入框样式 */
+        #textInput {
+            flex: 1;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #textInput:focus {
+            border-color: #2563eb;
+        }
+
+        /* 语音按钮样式 */
+        #voiceBtn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background-color: #2563eb;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        /* 录音中状态：红色按钮 */
+        #voiceBtn.recording {
+            background-color: #ef4444;
+            animation: pulse 1s infinite;
+        }
+
+        /* 录音脉冲动画 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* 提示文字 */
+        .tip {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="voice-input-container">
+            <!-- 核心输入框 -->
+            <input type="text" id="textInput" placeholder="说英语或在这里打字">
+            <!-- 语音输入按钮 -->
+            <button id="voiceBtn">🎤</button>
+        </div>
+        <p class="tip">点击麦克风按钮开始/停止语音输入（只有英文）</p>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const voiceBtn = document.getElementById('voiceBtn');
+        const textInput = document.getElementById('textInput');
+        
+        // 语音识别核心对象（兼容Chrome/Firefox/Safari/移动端）
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        debugger
+        // 判断浏览器是否支持语音识别
+        if (!SpeechRecognition) {
+            alert("您的浏览器不支持语音输入！请使用Chrome/Edge/Safari浏览器.");
+            voiceBtn.disabled = true;
+        } else {
+            // 初始化识别实例
+            const recognition = new SpeechRecognition();
+            
+            // 关键配置：设置识别语言为 英语(美国)
+            recognition.lang = 'en-US';
+            // 实时返回识别结果（边说边显示）
+            recognition.interimResults = true;
+            // 只识别单次语音（说完自动停止）
+            recognition.continuous = false;
+
+            let isRecording = false;
+
+            // 按钮点击事件：开始/停止录音
+            voiceBtn.addEventListener('click', () => {
+                if (isRecording) {
+                    // 停止录音
+                    recognition.stop();
+                    voiceBtn.classList.remove('recording');
+                    voiceBtn.textContent = '🎤';
+                    isRecording = false;
+                } else {
+                    // 开始录音
+                    recognition.start();
+                    voiceBtn.classList.add('recording');
+                    voiceBtn.textContent = '⏹️';
+                    isRecording = true;
+                }
+            });
+
+            // 语音识别结果事件
+            recognition.addEventListener('result', (e) => {
+                // 获取识别到的英文文本
+                const transcript = Array.from(e.results)
+                    .map(result => result[0])
+                    .map(result => result.transcript)
+                    .join('');
+                
+                // 将识别内容写入输入框
+                textInput.value = transcript;
+
+                // 识别完成后（最终结果），停止录音
+                if (e.results[0].isFinal) {
+                    voiceBtn.classList.remove('recording');
+                    voiceBtn.textContent = '🎤';
+                    isRecording = false;
+                }
+            });
+
+            // 识别出错处理（如无麦克风权限）
+            recognition.addEventListener('error', (err) => {
+                console.error('语音识别错误:', err);
+                alert('识别失败!请检查您的麦克风权限.');
+                voiceBtn.classList.remove('recording');
+                voiceBtn.textContent = '🎤';
+                isRecording = false;
+            });
+        }
+    </script>
+</body>
+</html>
