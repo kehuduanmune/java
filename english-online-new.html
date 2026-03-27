@@ -1008,9 +1008,23 @@
 
         // 错误处理
         recognition.onerror = function(err) {
-            console.log(err);
+            console.error('语音识别错误:', err);
             stopVoiceRecording();
-            alert(err);
+
+            // ✅ 根据错误类型给出友好提示
+            if (err.error === 'not-allowed') {
+                alert('❌ 无法访问麦克风：您已拒绝麦克风权限。\n\n请在浏览器地址栏右侧点击锁形图标，允许使用麦克风，然后刷新页面。\n\n或者使用句子跟读功能（点击句子旁的麦克风图标）。');
+            } else if (err.error === 'no-speech') {
+                alert('🎤 没有检测到语音，请对着麦克风说话。');
+            } else if (err.error === 'audio-capture') {
+                alert('🔌 找不到麦克风设备，请检查麦克风是否已连接。');
+            } else if (err.error === 'network') {
+                alert('🌐 网络连接失败，请检查网络后重试。');
+            } else if (err.error === 'language-not-supported') {
+                alert('🗣️ 不支持的语言设置。');
+            } else {
+                alert('⚠️ 语音识别失败：' + (err.message || '未知错误') + '\n错误类型：' + (err.error || 'unknown'));
+            }
         };
 
         // ✅ 最后启动录音
