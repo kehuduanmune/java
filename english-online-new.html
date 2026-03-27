@@ -991,35 +991,30 @@
                 return;
             }
         }
-         startVoiceRecording();
-       
-            // 识别成功
-            recognition.onresult = function(e) {
-                try {
-                    let text = e.results[0][0].transcript;
-                    document.getElementById('chat-input').value = text;
-                    sendChatMessage();
-                } catch (e) {}
-                stopVoiceRecording();
-            };
-
-            // 识别结束
-            recognition.onend = function() {
-                stopVoiceRecording();
-            };
-
-            // ✅ 修复：屏蔽网络错误，不弹窗、不报错
-            recognition.onerror = function(err) {
-                console.log("语音识别已关闭（网络原因）");
-                stopVoiceRecording();
-                alert("语音识别需要网络支持，请连接网络后重试。");
-            };
-
+        // ✅ 先设置回调函数，再启动录音
+        // 识别成功
+        recognition.onresult = function(e) {
             try {
-                startVoiceRecording();
-            } catch (e) {
-                stopVoiceRecording();
-            }
+                let text = e.results[0][0].transcript;
+                document.getElementById('chat-input').value = text;
+                sendChatMessage();
+            } catch (e) {}
+            stopVoiceRecording();
+        };
+        // 识别结束
+        recognition.onend = function() {
+            stopVoiceRecording();
+        };
+
+        // 错误处理
+        recognition.onerror = function(err) {
+            console.log("语音识别已关闭（网络原因）");
+            stopVoiceRecording();
+            alert("语音识别需要网络支持，请连接网络后重试。");
+        };
+
+        // ✅ 最后启动录音
+        startVoiceRecording();
     }
     // 切换选项卡
     function switchTab(tabId) {
