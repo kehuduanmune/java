@@ -1008,9 +1008,9 @@
 
         // 错误处理
         recognition.onerror = function(err) {
-            console.log("语音识别已关闭（网络原因）");
+            console.log(err);
             stopVoiceRecording();
-            alert("语音识别需要网络支持，请连接网络后重试。");
+            alert(err);
         };
 
         // ✅ 最后启动录音
