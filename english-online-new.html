@@ -1355,7 +1355,8 @@
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
-
+        utterance.rate = 0.7; // 稍微放慢语速
+        utterance.pitch = 1.1; // 稍微提高音调，更适合儿童
         // iOS 需要设置 voicesloaded
         const setVoice = () => {
             const voices = window.speechSynthesis.getVoices();
