@@ -991,10 +991,8 @@
                 return;
             }
         }
-
-        if (isRecording) {
-            stopVoiceRecording();
-        } else {
+         startVoiceRecording();
+       
             // 识别成功
             recognition.onresult = function(e) {
                 try {
@@ -1022,7 +1020,6 @@
             } catch (e) {
                 stopVoiceRecording();
             }
-        }
     }
     // 切换选项卡
     function switchTab(tabId) {
