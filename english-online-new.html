@@ -1732,6 +1732,30 @@
         const message = input.value.trim();
 
         if (message === '') return;
+         // 获取当前 AI 的问题
+        const topic = document.getElementById('chat-topic').value;
+        const dialogues = chatDatabase[topic];
+        
+        // 获取最后一条机器人消息
+        const robotMessages = document.querySelectorAll('#chat-container .dialog-bubble-robot p');
+        const lastRobotMessage = robotMessages.length > 0 ? 
+            robotMessages[robotMessages.length - 1].textContent : '';
+        
+        // 判断用户回答是否符合问题
+        const isRelevant = checkIfAnswerMatchesQuestion(message, lastRobotMessage, dialogues);
+        
+        if (!isRelevant) {
+            // 如果不相关，提示用户
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            setTimeout(() => {
+                const hintReply = generateHintReply(lastRobotMessage, message);
+                addChatMessage(hintReply, 'robot');
+                playSentence(hintReply);
+            }, 1000);
+            return;
+        }
 
         // 添加用户消息到聊天窗口
         addChatMessage(message, 'user');
@@ -1750,8 +1774,10 @@
             // 增加对话计数
             chatMessageCount++;
 
+           const topic = document.getElementById('chat-topic').value;
+            const totalMessages = chatDatabase[topic].length;
             // 检查对话是否完成（例如：完成了5轮对话）
-            if (chatMessageCount >= 5 && currentTask === 'chat') {
+            if (chatMessageCount >= totalMessages) {
                 debugger
                 // 完成对话任务
                 completeTask();
@@ -1765,7 +1791,138 @@
             }
         }, 1000);
     }
+      // 检查用户回答是否匹配问题
+    function checkIfAnswerMatchesQuestion(userAnswer, question, dialogues) {
+        // 将文本转为小写进行比较
+        const answerLower = userAnswer.toLowerCase();
+        const questionLower = question.toLowerCase();
+        
+        // 方法 1: 检查是否在预设对话中
+        for (let dialogue of dialogues) {
+            if (dialogue.robot.toLowerCase() === questionLower) {
+                // 找到对应的问题，检查答案是否合理
+                const expectedAnswer = dialogue.user.toLowerCase();
+                
+                // 检查是否包含关键词
+                const answerWords = answerLower.split(/\s+/);
+                const expectedWords = expectedAnswer.split(/\s+/);
+                
+                // 计算单词匹配度
+                let matchCount = 0;
+                for (let word of answerWords) {
+                    if (expectedWords.includes(word) || word.length > 3 && expectedWords.some(ew => ew.includes(word))) {
+                        matchCount++;
+                    }
+                }
+                
+                // 如果有一定比例的匹配，认为是相关的
+                const matchRatio = matchCount / Math.max(answerWords.length, expectedWords.length);
+                if (matchRatio >= 0.3) {
+                    return true;
+                }
+            }
+        }
+        
+        // 方法 2: 通用相关性检查
+        // 检查是否回答了常见疑问词
+        const questionWords = {
+            'what': ['thing', 'object', 'it', 'this', 'that'],
+            'where': ['place', 'location', 'here', 'there', 'at', 'in', 'on'],
+            'when': ['time', 'hour', 'day', 'date', 'at', 'on', 'in'],
+            'who': ['person', 'he', 'she', 'they', 'name'],
+            'why': ['because', 'reason', 'so', 'therefore'],
+            'how': ['way', 'method', 'by', 'with', 'use'],
+            'do/does': ['yes', 'no', 'like', 'want', 'have'],
+            'is/are': ['yes', 'no', 'it', 'they', 'this', 'that']
+        };
+        
+        // 识别问题类型
+        let questionType = null;
+        for (let qWord in questionWords) {
+            if (questionLower.includes(qWord)) {
+                questionType = qWord;
+                break;
+            }
+        }
+        
+        // 根据问题类型检查回答
+        if (questionType) {
+            const keywords = questionWords[questionType];
+            for (let keyword of keywords) {
+                if (answerLower.includes(keyword)) {
+                    return true;
+                }
+            }
+            
+            // 特殊处理 Yes/No 问题
+            if (['do/does', 'is/are'].includes(questionType)) {
+                if (answerLower.startsWith('yes') || answerLower.startsWith('no')) {
+                    return true;
+                }
+            }
+        }
+        
+        // 方法 3: 如果回答长度合理，默认接受（避免过于严格）
+        if (answerLower.length >= 3) {
+            return true;
+        }
+        
+        return false;
+    }
 
+    // 生成提示性回复
+    function generateHintReply(question, userAnswer) {
+        const hints = [
+            "I see what you mean. Can you tell me more about it?",
+            "That's interesting! But could you answer my question?",
+            "Hmm, I think you might have misunderstood. Let me ask again...",
+            "Good try! But my question was about something else. Can you think about it?",
+            "I'm not sure if that answers my question. Let's try again!",
+            "That's a good point, but can you answer what I asked?",
+            "Interesting! However, my question was different. Please listen carefully!",
+            "You're doing great! But let's focus on my question, okay?"
+        ];
+        
+        return hints[Math.floor(Math.random() * hints.length)];
+    }
+
+    // 生成 AI 回复
+    function generateAIReply(userMessage) {
+        const topic = document.getElementById('chat-topic').value;
+        const dialogues = chatDatabase[topic];
+
+        // 简单的关键词匹配
+        userMessage = userMessage.toLowerCase();
+
+        // 检查是否有预设的回复
+        for (let i = 0; i < dialogues.length; i++) {
+            const userPattern = dialogues[i].user.toLowerCase();
+
+            // 检查是否匹配当前对话流程
+            if (i < dialogues.length - 1) {
+                const lastRobotMessage = document.querySelectorAll('#chat-container .dialog-bubble-robot p:last-child');
+                if (lastRobotMessage.length > 0 && lastRobotMessage[lastRobotMessage.length - 1].textContent === dialogues[i].robot) {
+                    return dialogues[i + 1].robot;
+                }
+            }
+        }
+
+        // 如果没有匹配到，返回一个通用回复
+        const genericReplies = [
+            "That's interesting! Tell me more.",
+            "I see! What else do you like?",
+            "Great job! You're speaking English well!",
+            "Can you say that again?",
+            "That's correct! Well done!",
+            "I like talking to you!",
+            "What do you want to talk about?",
+            "Do you have any questions?",
+            "You're learning fast!",
+            "Let's practice more English together!"
+        ];
+
+        return genericReplies[Math.floor(Math.random() * genericReplies.length)];
+    }
     // 添加聊天消息
     function addChatMessage(message, sender) {
         const chatContainer = document.getElementById('chat-container');
