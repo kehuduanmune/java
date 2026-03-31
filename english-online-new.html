@@ -1839,6 +1839,9 @@
             feedback.classList.add('opacity-90');
         }, 100);
 
+        // 使用语音合成朗读反馈信息
+        speakFeedback(message);
+
         // 3秒后淡出并移除
         setTimeout(() => {
             feedback.classList.add('opacity-0');
@@ -1848,6 +1851,101 @@
         }, 3000);
     }
 
+    // 朗读反馈信息
+    function speakFeedback(text) {
+        // 检查浏览器是否支持语音合成
+        if ('speechSynthesis' in window) {
+            // 取消当前正在播放的语音
+            window.speechSynthesis.cancel();
+
+            // 创建语音实例
+            const utterance = new SpeechSynthesisUtterance(text);
+
+            // 设置语言为中文
+            utterance.lang = 'zh-CN';
+
+            // 设置语速（0.1 - 10，默认 1）
+            utterance.rate = 1;
+
+            // 设置音调（0 - 2，默认 1）
+            utterance.pitch = 1;
+
+            // 设置音量（0 - 1，默认 1）
+            utterance.volume = 1;
+
+            // 语音播放结束后的回调
+            utterance.onend = function() {
+                console.log('反馈朗读完成');
+            };
+
+            // 语音播放错误的回调
+            utterance.onerror = function(event) {
+                console.error('语音朗读失败:', event);
+                // 移动端重试机制
+                if (event.error === 'not-allowed' || event.error === 'interrupted') {
+                    console.log('尝试重新初始化语音引擎...');
+                    initializeSpeechSynthesis().then(() => {
+                        window.speechSynthesis.speak(utterance);
+                    });
+                }
+            };
+
+            // 在移动端，需要先确保语音引擎已加载
+            if (isMobileDevice()) {
+                // 移动端：确保 voices 已加载
+                loadVoices().then(() => {
+                    window.speechSynthesis.speak(utterance);
+                });
+            } else {
+                // 桌面端：直接播放
+                window.speechSynthesis.speak(utterance);
+            }
+        } else {
+            console.warn('您的浏览器不支持语音合成');
+        }
+    }
+    // 初始化语音引擎（用于错误恢复）
+    async function initializeSpeechSynthesis() {
+        return new Promise((resolve) => {
+            window.speechSynthesis.cancel();
+
+            // 等待一小段时间让引擎重置
+            setTimeout(() => {
+                if (isMobileDevice()) {
+                    loadVoices().then(resolve);
+                } else {
+                    resolve();
+                }
+            }, 100);
+        });
+    }
+    // 检测设备是否为移动设备
+    function isMobileDevice() {
+        return /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    // 加载语音列表（移动端必需）
+    function loadVoices() {
+        return new Promise((resolve) => {
+            let voices = window.speechSynthesis.getVoices();
+
+            // 如果已经有语音列表，直接返回
+            if (voices.length > 0) {
+                resolve(voices);
+                return;
+            }
+
+            // 监听 voiceschanged 事件（异步加载）
+            window.speechSynthesis.onvoiceschanged = () => {
+                voices = window.speechSynthesis.getVoices();
+                resolve(voices);
+            };
+
+            // 超时处理（2 秒后强制继续）
+            setTimeout(() => {
+                resolve(window.speechSynthesis.getVoices());
+            }, 2000);
+        });
+    }
     // 录制当前句子（模态框中）
     function recordCurrentSentence() {
         if (learningSentences.length > 0 && currentSentenceIndex < learningSentences.length) {
