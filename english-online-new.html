@@ -780,8 +780,8 @@
             { robot: "I love animals! Do you like animals?", user: "Yes, I like animals very much." },
             { robot: "What's your favorite animal?", user: "My favorite animal is [animal]." },
             { robot: "Why do you like it?", user: "Because it is very cute." },
-            { robot: "That's a great animal! What sound does a [animal] make?", user: "A [animal] says [sound]." },
-            { robot: "Where do [animal]s live?", user: "They live in the forest or zoo." },
+            { robot: "That's a great animal! What sound does it make?", user: "A [animal] says [sound]." },
+            { robot: "Where do they live?", user: "They live in the forest or zoo." },
             { robot: "Do you have a pet?", user: "Yes, I have a [pet]." },
             { robot: "What's your pet's name?", user: "My pet's name is [name]." },
             { robot: "What can your pet do?", user: "It can run and jump." },
@@ -1325,12 +1325,77 @@
             // 创建新的语音
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
-            utterance.rate = 0.7; // 稍微放慢语速
-            utterance.pitch = 1.1; // 稍微提高音调，更适合儿童
+
+            // 优化语音参数，使其更自然
+            utterance.rate = 0.85; // 稍微放慢语速，更清晰
+            utterance.pitch = 1.0; // 正常音调
+            utterance.volume = 1.0; // 正常音量
+
+            // 选择更自然的英语语音
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(voice =>
+                voice.lang === 'en-US' &&
+                    (voice.name.includes('Google') ||
+                    voice.name.includes('Natural') ||
+                    voice.name.includes('Samantha') ||
+                    voice.name.includes('Daniel')||
+                    voice.name.includes('Zira'))
+            );
+
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            } else {
+                // 如果没有找到首选语音，使用第一个英语语音
+                const englishVoice = voices.find(v => v.lang.includes('en-US'));
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+            }
+
+            // 添加语调变化，使发音更自然
+            addProsodyToUtterance(utterance, text);
 
             // 播放语音
             window.speechSynthesis.speak(utterance);
         }
+    }
+
+    // 为语音添加韵律和语调变化
+    function addProsodyToUtterance(utterance, text) {
+        // 根据句子类型调整音调
+        if (text.endsWith('?')) {
+            // 疑问句：句尾音调略微上升，语速稍慢
+            utterance.pitch = 1.1;
+            utterance.rate = 0.8;
+        } else if (text.endsWith('!')) {
+            // 感叹句：更有活力，音调稍高
+            utterance.pitch = 1.05;
+            utterance.rate = 0.9;
+        } else {
+            // 陈述句：正常语调，温和的语速
+            utterance.pitch = 1.0;
+            utterance.rate = 0.85;
+        }
+
+        // 监听边界事件，在适当位置添加停顿
+        let lastWordIndex = 0;
+        utterance.onboundary = function(event) {
+            if (event.name === 'word') {
+                const wordEnd = event.charIndex + event.charLength;
+
+                // 在逗号后添加短暂停顿
+                if (text.charAt(wordEnd) === ',') {
+                    // 浏览器会自动处理标点停顿
+                }
+
+                // 在句号后添加较长停顿
+                if (text.charAt(wordEnd) === '.' || text.charAt(wordEnd) === '!' || text.charAt(wordEnd) === '?') {
+                    // 浏览器会自动处理标点停顿
+                }
+
+                lastWordIndex = wordEnd;
+            }
+        };
     }
     function playAudioFile(text) {
         // 使用在线 TTS 服务生成音频
@@ -1346,6 +1411,18 @@
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
             utterance.volume = 1.0; // 最大音量
+            utterance.rate = 0.85; // 更自然的语速
+            utterance.pitch = 1.0; // 正常音调
+
+            // 选择优质语音
+            const voices = window.speechSynthesis.getVoices();
+            const englishVoice = voices.find(v =>
+                v.lang.includes('en-US') &&
+                (v.name.includes('Google') || v.name.includes('Samsung'))
+            );
+            if (englishVoice) {
+                utterance.voice = englishVoice;
+            }
 
             window.speechSynthesis.speak(utterance);
         } else {
@@ -1361,12 +1438,18 @@
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
-        utterance.rate = 0.7; // 稍微放慢语速
-        utterance.pitch = 1.1; // 稍微提高音调，更适合儿童
+        utterance.rate = 0.85; // 稍微放慢语速，更清晰
+        utterance.pitch = 1.0; // 正常音调
+        utterance.volume = 1.0; // 正常音量
         // iOS 需要设置 voicesloaded
         const setVoice = () => {
             const voices = window.speechSynthesis.getVoices();
-            const englishVoice = voices.find(v => v.lang.includes('en'));
+            // 优先选择更自然的语音
+            const englishVoice = voices.find(v =>
+                v.lang.includes('en') &&
+                (v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Karen'))
+            );
+
             if (englishVoice) {
                 utterance.voice = englishVoice;
             }
@@ -1491,8 +1574,8 @@
 
     }
 
-  
-   // 初始化语音识别
+
+    // 初始化语音识别
     function initSpeechRecognition() {
         try {
             window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1732,23 +1815,24 @@
         const message = input.value.trim();
 
         if (message === '') return;
-         // 获取当前 AI 的问题
+
+        // 获取当前 AI 的问题
         const topic = document.getElementById('chat-topic').value;
         const dialogues = chatDatabase[topic];
-        
+
         // 获取最后一条机器人消息
         const robotMessages = document.querySelectorAll('#chat-container .dialog-bubble-robot p');
-        const lastRobotMessage = robotMessages.length > 0 ? 
+        const lastRobotMessage = robotMessages.length > 0 ?
             robotMessages[robotMessages.length - 1].textContent : '';
-        
+
         // 判断用户回答是否符合问题
         const isRelevant = checkIfAnswerMatchesQuestion(message, lastRobotMessage, dialogues);
-        
+
         if (!isRelevant) {
             // 如果不相关，提示用户
             addChatMessage(message, 'user');
             input.value = '';
-            
+
             setTimeout(() => {
                 const hintReply = generateHintReply(lastRobotMessage, message);
                 addChatMessage(hintReply, 'robot');
@@ -1773,8 +1857,7 @@
 
             // 增加对话计数
             chatMessageCount++;
-
-           const topic = document.getElementById('chat-topic').value;
+            const topic = document.getElementById('chat-topic').value;
             const totalMessages = chatDatabase[topic].length;
             // 检查对话是否完成（例如：完成了5轮对话）
             if (chatMessageCount >= totalMessages) {
@@ -1791,22 +1874,22 @@
             }
         }, 1000);
     }
-      // 检查用户回答是否匹配问题
+    // 检查用户回答是否匹配问题                 用户回答     问题       对话列表
     function checkIfAnswerMatchesQuestion(userAnswer, question, dialogues) {
         // 将文本转为小写进行比较
         const answerLower = userAnswer.toLowerCase();
         const questionLower = question.toLowerCase();
-        
+
         // 方法 1: 检查是否在预设对话中
         for (let dialogue of dialogues) {
             if (dialogue.robot.toLowerCase() === questionLower) {
                 // 找到对应的问题，检查答案是否合理
                 const expectedAnswer = dialogue.user.toLowerCase();
-                
+
                 // 检查是否包含关键词
                 const answerWords = answerLower.split(/\s+/);
                 const expectedWords = expectedAnswer.split(/\s+/);
-                
+
                 // 计算单词匹配度
                 let matchCount = 0;
                 for (let word of answerWords) {
@@ -1814,7 +1897,7 @@
                         matchCount++;
                     }
                 }
-                
+
                 // 如果有一定比例的匹配，认为是相关的
                 const matchRatio = matchCount / Math.max(answerWords.length, expectedWords.length);
                 if (matchRatio >= 0.3) {
@@ -1822,7 +1905,7 @@
                 }
             }
         }
-        
+
         // 方法 2: 通用相关性检查
         // 检查是否回答了常见疑问词
         const questionWords = {
@@ -1835,7 +1918,7 @@
             'do/does': ['yes', 'no', 'like', 'want', 'have'],
             'is/are': ['yes', 'no', 'it', 'they', 'this', 'that']
         };
-        
+
         // 识别问题类型
         let questionType = null;
         for (let qWord in questionWords) {
@@ -1844,7 +1927,7 @@
                 break;
             }
         }
-        
+
         // 根据问题类型检查回答
         if (questionType) {
             const keywords = questionWords[questionType];
@@ -1853,7 +1936,7 @@
                     return true;
                 }
             }
-            
+
             // 特殊处理 Yes/No 问题
             if (['do/does', 'is/are'].includes(questionType)) {
                 if (answerLower.startsWith('yes') || answerLower.startsWith('no')) {
@@ -1861,12 +1944,12 @@
                 }
             }
         }
-        
+
         // 方法 3: 如果回答长度合理，默认接受（避免过于严格）
         if (answerLower.length >= 3) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -1882,7 +1965,7 @@
             "Interesting! However, my question was different. Please listen carefully!",
             "You're doing great! But let's focus on my question, okay?"
         ];
-        
+
         return hints[Math.floor(Math.random() * hints.length)];
     }
 
